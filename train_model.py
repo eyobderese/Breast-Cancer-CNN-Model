@@ -18,7 +18,7 @@ matplotlib.use("Agg")
 plot_path = "plot.png"
 
 # Set training parameters
-NUM_EPOCHS = 40
+NUM_EPOCHS = 1
 INIT_LR = 1e-2
 BS = 32
 
@@ -85,14 +85,14 @@ opt = Adagrad(learning_rate=INIT_LR)
 model.compile(loss="binary_crossentropy", optimizer=opt, metrics=["accuracy"])
 print(model.input_shape)
 
-# Test MOdel
+# # Test MOdel
 # H = model.fit(
-#     x=trainGen,
-#     steps_per_epoch=2,
-#     validation_data=valGen,
-#     validation_steps=2,
-#     epochs=2
-# )
+#      x=trainGen,
+#      steps_per_epoch=2,
+#      validation_data=valGen,
+#      validation_steps=2,
+#      epochs=2
+#  )
 
 # Train the model
 H = model.fit(
@@ -102,39 +102,42 @@ H = model.fit(
     validation_steps=totalVal // BS,
     epochs=NUM_EPOCHS)
 
-# Evaluate the model
-print("[INFO] evaluating network...")
-testGen.reset()
-predIdxs = model.predict(x=testGen, steps=(totalTest // BS) + 1)
-predIdxs = np.argmax(predIdxs, axis=1)
-print(classification_report(testGen.classes, predIdxs,
-      target_names=testGen.class_indices.keys()))
-
-# Calculate confusion matrix, accuracy, sensitivity, and specificity
-cm = confusion_matrix(testGen.classes, predIdxs)
-total = sum(sum(cm))
-acc = (cm[0, 0] + cm[1, 1]) / total
-sensitivity = cm[0, 0] / (cm[0, 0] + cm[0, 1])
-specificity = cm[1, 1] / (cm[1, 0] + cm[1, 1])
-print(cm)
-print("acc: {:.4f}".format(acc))
-print("sensitivity: {:.4f}".format(sensitivity))
-print("specificity: {:.4f}".format(specificity))
-
-# Save the model
 model.save("cancer_detection_model.h5")
-print("[INFO] Model saved to disk.")
 
-# Plot the training loss and accuracy
-N = NUM_EPOCHS
-plt.style.use("ggplot")
-plt.figure()
-plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
-plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
-plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")
-plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")
-plt.title("Training Loss and Accuracy on Dataset")
-plt.xlabel("Epoch #")
-plt.ylabel("Loss/Accuracy")
-plt.legend(loc="lower left")
-plt.savefig(plot_path)
+
+# # Evaluate the model
+# print("[INFO] evaluating network...")
+# testGen.reset()
+# predIdxs = model.predict(x=testGen, steps=(totalTest // BS) + 1)
+# predIdxs = np.argmax(predIdxs, axis=1)
+# print(classification_report(testGen.classes, predIdxs,
+#       target_names=testGen.class_indices.keys()))
+
+# # Calculate confusion matrix, accuracy, sensitivity, and specificity
+# cm = confusion_matrix(testGen.classes, predIdxs)
+# total = sum(sum(cm))
+# acc = (cm[0, 0] + cm[1, 1]) / total
+# sensitivity = cm[0, 0] / (cm[0, 0] + cm[0, 1])
+# specificity = cm[1, 1] / (cm[1, 0] + cm[1, 1])
+# print(cm)
+# print("acc: {:.4f}".format(acc))
+# print("sensitivity: {:.4f}".format(sensitivity))
+# print("specificity: {:.4f}".format(specificity))
+
+# # Save the model
+# model.save("cancer_detection_model.h5")
+# print("[INFO] Model saved to disk.")
+
+# # Plot the training loss and accuracy
+# N = NUM_EPOCHS
+# plt.style.use("ggplot")
+# plt.figure()
+# plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
+# plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
+# plt.plot(np.arange(0, N), H.history["accuracy"], label="train_acc")
+# plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")
+# plt.title("Training Loss and Accuracy on Dataset")
+# plt.xlabel("Epoch #")
+# plt.ylabel("Loss/Accuracy")
+# plt.legend(loc="lower left")
+# plt.savefig(plot_path)

@@ -1,27 +1,34 @@
+import os
+import numpy as np
+import cv2
 from flask import Flask, request, jsonify
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
-import numpy as np
-import cv2
-
-app = Flask(__name__)
-
+from flask_cors import CORS, cross_origin
 # Load the model
 model = load_model("cancer_detection_model.h5")
 
+app = Flask(__name__)
+CORS(app)
+
 # Function to preprocess the input image
+
+
 def preprocess_image(image, target_size=(48, 48)):
-    # Convert the image to RGB format
+    # Convert the image to RGB format if it has an alpha channel
     if image.shape[2] == 4:  # If the image has an alpha channel
         image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
-    image = cv2.resize(image, target_size)  # Resize to match the model's input size
-    image = image.astype("float") / 255.0  # Normalize the image
+    # Resize to match the model's input size
+    image = cv2.resize(image, target_size)
+    image = image.astype("float") / 255.0  # Normalize
     image = img_to_array(image)  # Convert to array
-    image = np.expand_dims(image, axis=0)  # Expand dimensions to match model's input shape
+    image = np.expand_dims(image, axis=0)  # Expand dimensions for model
     return image
+
 
 @app.route("/predict", methods=["POST"])
 def predict():
+    # Check if an image is provided in the request
     if "image" not in request.files:
         return jsonify({"error": "No image provided"}), 400
 
@@ -41,6 +48,7 @@ def predict():
 
     # Return the prediction as JSON
     return jsonify({"prediction": label, "confidence": float(confidence)})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
