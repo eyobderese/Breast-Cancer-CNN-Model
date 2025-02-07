@@ -5,7 +5,10 @@ from flask import Flask, request, jsonify
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
 from flask_cors import CORS, cross_origin
+import tensorflow as tf
 # Load the model
+
+print(tf.__version__)
 model = load_model("cancer_detection_model.h5")
 
 app = Flask(__name__)

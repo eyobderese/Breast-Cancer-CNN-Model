@@ -1,0 +1,9 @@
+Flask==2.3.2
+Flask_Cors==5.0.0
+imutils==0.5.4
+keras==2.11.0
+matplotlib==3.5.1
+numpy==1.21.5
+opencv_python==4.10.0.84
+scikit_learn==1.6.1
+tensorflow==2.11.0
